@@ -1,5 +1,6 @@
 """Telegram expense-tracking bot for two housemates."""
 
+import datetime
 import logging
 
 from telegram import Update
@@ -36,6 +37,23 @@ _MODE_LABEL = {
     "for_other": "за другого",
     "personal": "личные %",
 }
+
+_RU_MONTHS = ["янв","фев","мар","апр","май","июн","июл","авг","сен","окт","ноя","дек"]
+
+def _fmt_date(iso: str | None) -> str:
+    """Format ISO date as '5 апр' or 'сегодня'."""
+    today = datetime.date.today()
+    if not iso:
+        return "сегодня"
+    try:
+        d = datetime.date.fromisoformat(iso)
+    except ValueError:
+        return "сегодня"
+    if d == today:
+        return "сегодня"
+    if d == today - datetime.timedelta(days=1):
+        return "вчера"
+    return f"{d.day} {_RU_MONTHS[d.month - 1]}"
 
 
 def _is_allowed(update: Update) -> bool:
@@ -93,8 +111,9 @@ async def cmd_history(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Non
         payer = config.user_name(row["payer_id"])
         mode_label = _MODE_LABEL.get(row["mode"], row["mode"])
         extra = f" ({row['personal_pct']:.0f}% личные)" if row["mode"] == "personal" else ""
+        date_label = _fmt_date(row["purchase_date"])
         lines.append(
-            f"• {payer} — {row['description']}: {row['amount']:.2f} ฿"
+            f"• <i>{date_label}</i> {payer} — {row['description']}: {row['amount']:.2f} ฿"
             f"  [{mode_label}{extra}]"
         )
 
@@ -189,12 +208,14 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     else:
         payer_id = user_id
 
+    purchase_date = result.get("purchase_date")  # None = today
     add_expense(
         payer_id=payer_id,
         amount=result["amount"],
         description=result["description"],
         mode=result["mode"],
         personal_pct=result.get("personal_pct", 0.0),
+        purchase_date=purchase_date,
     )
 
     net = compute_balance()
@@ -205,9 +226,10 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
         if result["mode"] == "personal"
         else ""
     )
+    date_label = _fmt_date(purchase_date)
 
     response = (
-        f"✅ Записано [{mode_label}{extra}]\n"
+        f"✅ Записано [{mode_label}{extra}] {date_label}\n"
         f"   {payer_name}: {result['description']} — {result['amount']:.2f} ฿\n\n"
         f"{format_balance(net)}"
     )

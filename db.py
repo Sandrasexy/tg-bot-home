@@ -9,15 +9,21 @@ def init_db() -> None:
     with _conn() as conn:
         conn.execute("""
             CREATE TABLE IF NOT EXISTS expenses (
-                id          INTEGER PRIMARY KEY AUTOINCREMENT,
-                payer_id    INTEGER NOT NULL,
-                amount      REAL    NOT NULL,
-                description TEXT    NOT NULL,
-                mode        TEXT    NOT NULL DEFAULT 'shared',
-                personal_pct REAL   NOT NULL DEFAULT 0,
-                created_at  DATETIME DEFAULT CURRENT_TIMESTAMP
+                id           INTEGER PRIMARY KEY AUTOINCREMENT,
+                payer_id     INTEGER NOT NULL,
+                amount       REAL    NOT NULL,
+                description  TEXT    NOT NULL,
+                mode         TEXT    NOT NULL DEFAULT 'shared',
+                personal_pct REAL    NOT NULL DEFAULT 0,
+                purchase_date DATE   NOT NULL DEFAULT (date('now')),
+                created_at   DATETIME DEFAULT CURRENT_TIMESTAMP
             )
         """)
+        # Migrate existing tables that don't have purchase_date yet
+        try:
+            conn.execute("ALTER TABLE expenses ADD COLUMN purchase_date DATE NOT NULL DEFAULT (date('now'))")
+        except Exception:
+            pass  # column already exists
 
 
 @contextmanager
@@ -40,13 +46,16 @@ def add_expense(
     description: str,
     mode: str = "shared",
     personal_pct: float = 0.0,
+    purchase_date: str | None = None,
 ) -> int:
     """Insert expense and return its id."""
+    import datetime
+    date_val = purchase_date or datetime.date.today().isoformat()
     with _conn() as conn:
         cur = conn.execute(
-            "INSERT INTO expenses (payer_id, amount, description, mode, personal_pct)"
-            " VALUES (?, ?, ?, ?, ?)",
-            (payer_id, amount, description, mode, personal_pct),
+            "INSERT INTO expenses (payer_id, amount, description, mode, personal_pct, purchase_date)"
+            " VALUES (?, ?, ?, ?, ?, ?)",
+            (payer_id, amount, description, mode, personal_pct, date_val),
         )
         return cur.lastrowid  # type: ignore[return-value]
 
