@@ -39,6 +39,11 @@ _SYSTEM = """\
   Если дата не упомянута — верни null (бот подставит сегодня).
 - Если сообщение НЕ описывает расход, верни: {"error": "not_an_expense"}
 
+ВАЖНО — фразы "записать на [имя]", "на [имя]", "это [имя]":
+  Означают что ОТПРАВИТЕЛЬ заплатил, а [имя] должен вернуть всю сумму.
+  → actual_payer="sender", mode="for_other"
+  Пример: "{sender} говорит '300 бат записать на {other}'" = {sender} заплатил, {other} должен 300.
+
 Примеры:
 - "потратил 600 бат в магазине"
   → {"amount":600,"description":"магазин","actual_payer":"sender","mode":"shared","personal_pct":0,"purchase_date":null}
@@ -48,6 +53,10 @@ _SYSTEM = """\
   → {"amount":500,"description":"продукты","actual_payer":"other","mode":"shared","personal_pct":0,"purchase_date":null}
 - "купил за {other} лекарства на 300"
   → {"amount":300,"description":"лекарства","actual_payer":"sender","mode":"for_other","personal_pct":0,"purchase_date":null}
+- "300 бат записать на {other}"
+  → {"amount":300,"description":"расход","actual_payer":"sender","mode":"for_other","personal_pct":0,"purchase_date":null}
+- "кофе 100 бат, на {other}"
+  → {"amount":100,"description":"кофе","actual_payer":"sender","mode":"for_other","personal_pct":0,"purchase_date":null}
 - "купил на 1000 бат, 70% мои личные"
   → {"amount":1000,"description":"покупка","actual_payer":"sender","mode":"personal","personal_pct":70,"purchase_date":null}
 - "3 апреля купил продукты на 400"
