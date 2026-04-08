@@ -207,17 +207,38 @@ document.getElementById('orgForm').addEventListener('submit', async function (e)
 
 // ===== LETTER LIGHTBOX =====
 function openLetterModal(el) {
-  const content = el.cloneNode(true);
-  content.style.cursor = 'default';
-  content.style.transform = 'none';
-  content.style.boxShadow = 'none';
-  // Remove the hover hint pseudo-element effect by adding a class
-  content.classList.add('lb-clone');
-  document.getElementById('lbContent').innerHTML = '';
-  document.getElementById('lbContent').appendChild(content);
-  document.getElementById('lbOverlay').classList.add('active');
+  const imgSrc = el.getAttribute('data-img');
+  const overlay = document.getElementById('lbOverlay');
+  const content = document.getElementById('lbContent');
+
+  if (imgSrc) {
+    // Try to show image; fallback to HTML if image fails to load
+    const img = document.createElement('img');
+    img.src = imgSrc;
+    img.alt = 'Благодарственное письмо';
+    img.style.cssText = 'width:100%;border-radius:4px;display:block;';
+    img.onerror = function() {
+      // Image not found — show HTML content instead
+      const clone = el.cloneNode(true);
+      clone.classList.add('lb-clone');
+      clone.style.cssText = 'cursor:default;transform:none;box-shadow:none;';
+      content.innerHTML = '';
+      content.appendChild(clone);
+    };
+    content.innerHTML = '';
+    content.appendChild(img);
+  } else {
+    const clone = el.cloneNode(true);
+    clone.classList.add('lb-clone');
+    clone.style.cssText = 'cursor:default;transform:none;box-shadow:none;';
+    content.innerHTML = '';
+    content.appendChild(clone);
+  }
+
+  overlay.classList.add('active');
   document.body.style.overflow = 'hidden';
 }
+
 function closeLetterModal(e) {
   if (e && e.target !== document.getElementById('lbOverlay') && !e.target.classList.contains('lb-close')) return;
   document.getElementById('lbOverlay').classList.remove('active');
