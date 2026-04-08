@@ -205,6 +205,28 @@ document.getElementById('orgForm').addEventListener('submit', async function (e)
   document.getElementById('formSuccess').style.display = 'block';
 });
 
+// ===== LETTER LIGHTBOX =====
+function openLetterModal(el) {
+  const content = el.cloneNode(true);
+  content.style.cursor = 'default';
+  content.style.transform = 'none';
+  content.style.boxShadow = 'none';
+  // Remove the hover hint pseudo-element effect by adding a class
+  content.classList.add('lb-clone');
+  document.getElementById('lbContent').innerHTML = '';
+  document.getElementById('lbContent').appendChild(content);
+  document.getElementById('lbOverlay').classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+function closeLetterModal(e) {
+  if (e && e.target !== document.getElementById('lbOverlay') && !e.target.classList.contains('lb-close')) return;
+  document.getElementById('lbOverlay').classList.remove('active');
+  document.body.style.overflow = '';
+}
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeLetterModal({ target: document.getElementById('lbOverlay') });
+});
+
 // ===== HEADER SCROLL SHADOW =====
 window.addEventListener('scroll', function () {
   const header = document.querySelector('.header');
