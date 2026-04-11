@@ -2,10 +2,25 @@
 const TG_BOT_TOKEN = 'YOUR_BOT_TOKEN';
 const TG_CHAT_ID   = 'YOUR_CHAT_ID';
 
-// ===== SCROLL TO FORM =====
-function scrollToForm() {
-  document.getElementById('contact-form').scrollIntoView({ behavior: 'smooth' });
+// ===== CONTACT MODAL =====
+function scrollToForm() { openContactModal(); }
+
+function openContactModal() {
+  document.getElementById('contactModal').classList.add('active');
+  document.body.style.overflow = 'hidden';
+  setTimeout(() => { const el = document.getElementById('cName'); if (el) el.focus(); }, 100);
 }
+function closeContactModal(e) {
+  if (e && e.target !== document.getElementById('contactModal') && !e.target.classList.contains('modal-close')) return;
+  document.getElementById('contactModal').classList.remove('active');
+  document.body.style.overflow = '';
+}
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    closeContactModal({ target: document.getElementById('contactModal') });
+    closeLetterModal({ target: document.getElementById('lbOverlay') });
+  }
+});
 
 // ===== FAQ ACCORDION =====
 function toggleFaq(btn) {
@@ -15,7 +30,7 @@ function toggleFaq(btn) {
   if (!isOpen) item.classList.add('open');
 }
 
-// ===== PHONE MASK =====
+// ===== PHONE MASK (для полей org-формы: (000) 000-00-00) =====
 function applyPhoneMask(input) {
   input.addEventListener('input', function () {
     let val = this.value.replace(/\D/g, '');
@@ -31,6 +46,31 @@ function applyPhoneMask(input) {
 
 applyPhoneMask(document.getElementById('phone1'));
 applyPhoneMask(document.getElementById('phone2'));
+
+// ===== MODAL PHONE MASK: +7 (___) ___-__-__ =====
+(function() {
+  const input = document.getElementById('cPhone');
+  if (!input) return;
+  function format(val) {
+    let d = val.replace(/\D/g, '');
+    if (d.startsWith('7') || d.startsWith('8')) d = d.slice(1);
+    d = d.slice(0, 10);
+    let r = '+7';
+    if (d.length > 0) r += ' (' + d.slice(0, 3);
+    if (d.length >= 3) r += ')';
+    if (d.length > 3) r += ' ' + d.slice(3, 6);
+    if (d.length > 6) r += '-' + d.slice(6, 8);
+    if (d.length > 8) r += '-' + d.slice(8, 10);
+    return r;
+  }
+  input.addEventListener('focus', function() { if (!this.value) this.value = '+7 '; });
+  input.addEventListener('input', function() { const pos = this.selectionStart; this.value = format(this.value); });
+  input.addEventListener('keydown', function(e) {
+    if ((e.key === 'Backspace' || e.key === 'Delete') && this.value.replace(/\D/g,'').length <= 1) {
+      e.preventDefault(); this.value = '+7 ';
+    }
+  });
+})();
 
 // ===== PHONE WRAP STATE =====
 ['phone1', 'phone2'].forEach(function(id, i) {
@@ -200,9 +240,43 @@ document.getElementById('orgForm').addEventListener('submit', async function (e)
     console.warn('Telegram send failed:', err);
   }
 
-  // Показываем успех в любом случае (даже если TG недоступен)
-  document.getElementById('orgForm').style.display = 'none';
-  document.getElementById('formSuccess').style.display = 'block';
+  // Редирект на страницу благодарности
+  window.location.href = '/thanks3';
+});
+
+// ===== CONTACT FORM (маленькая модалка) =====
+document.getElementById('contactForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  let valid = true;
+
+  const name = document.getElementById('cName').value.trim();
+  if (!name || name.length < 2) {
+    showError('cName', 'Введите ваше имя');
+    valid = false;
+  } else { showValid('cName'); }
+
+  const phoneDigits = document.getElementById('cPhone').value.replace(/\D/g, '');
+  if (phoneDigits.length < 11) {
+    showError('cPhone', 'Введите полный номер телефона');
+    valid = false;
+  } else { showValid('cPhone'); }
+
+  if (!valid) return;
+
+  const btn = this.querySelector('.modal-submit');
+  btn.disabled = true;
+  btn.textContent = 'Отправка...';
+
+  try {
+    const text = `📞 *Заявка с сайта ПравоТранс*\n\n👤 *Имя:* ${name}\n📱 *Телефон:* +${phoneDigits}`;
+    await fetch(`https://api.telegram.org/bot${TG_BOT_TOKEN}/sendMessage`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ chat_id: TG_CHAT_ID, text, parse_mode: 'Markdown' })
+    });
+  } catch(err) { console.warn('TG error:', err); }
+
+  window.location.href = '/spasibo';
 });
 
 // ===== LETTER LIGHTBOX =====

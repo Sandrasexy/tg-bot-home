@@ -259,28 +259,76 @@ ul { list-style: none; }
 .region-item { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius); padding: 14px 12px; text-align: center; font-size: 0.83rem; opacity: 0.85; transition: background .2s; }
 .region-item:hover { background: rgba(255,255,255,0.1); }
 
+/* ===== CONTACT MODAL ===== */
+.modal-overlay { display: none; position: fixed; inset: 0; background: rgba(10,20,40,0.82); z-index: 200; align-items: center; justify-content: center; padding: 20px; }
+.modal-overlay.active { display: flex; }
+.modal-box { background: #fff; border-radius: 12px; width: 100%; max-width: 440px; padding: 40px 36px 32px; position: relative; box-shadow: 0 24px 64px rgba(0,0,0,0.3); }
+.modal-close { position: absolute; top: 14px; right: 16px; font-size: 1.6rem; background: none; border: none; cursor: pointer; color: var(--muted); line-height: 1; transition: color .15s; }
+.modal-close:hover { color: var(--blue); }
+.modal-icon { font-size: 2.2rem; text-align: center; margin-bottom: 12px; }
+.modal-title { font-family: 'Playfair Display', Georgia, serif; font-size: 1.4rem; font-weight: 700; color: var(--blue); text-align: center; margin-bottom: 6px; }
+.modal-sub { text-align: center; font-size: 0.88rem; color: var(--muted); margin-bottom: 24px; }
+.modal-group { display: flex; flex-direction: column; gap: 5px; margin-bottom: 16px; }
+.modal-group label { font-size: 0.85rem; font-weight: 600; color: var(--blue); }
+.modal-group input { border: 1.5px solid var(--border); border-radius: var(--radius); padding: 12px 14px; font-size: 1rem; color: var(--text); outline: none; transition: border-color .2s; width: 100%; }
+.modal-group input:focus { border-color: var(--blue2); }
+.modal-group input.error { border-color: #e53935; }
+.modal-group input.valid { border-color: var(--green); }
+.modal-submit { width: 100%; background: var(--green); color: #fff; border: none; border-radius: 6px; padding: 14px; font-size: 1rem; font-weight: 700; cursor: pointer; transition: background .2s, transform .15s; margin-top: 4px; }
+.modal-submit:hover { background: var(--green2); transform: translateY(-1px); }
+
 /* ===== RESPONSIVE ===== */
 @media (max-width: 900px) {
-  .hero__inner     { grid-template-columns: 1fr; }
-  .hero__card      { display: none; }
-  .stats__grid     { grid-template-columns: repeat(2, 1fr); }
-  .problems__grid  { grid-template-columns: 1fr 1fr; }
-  .steps           { grid-template-columns: 1fr 1fr; }
-  .cases__grid     { grid-template-columns: 1fr 1fr; }
-  .why__grid       { grid-template-columns: 1fr; }
-  .footer__inner   { grid-template-columns: 1fr 1fr; }
-  .form-wrap       { padding: 32px 24px; }
+  .hero__inner       { grid-template-columns: 1fr; }
+  .hero__card        { display: none; }
+  .stats__grid       { grid-template-columns: repeat(2, 1fr); }
+  .problems__grid    { grid-template-columns: 1fr 1fr; }
+  .steps             { grid-template-columns: 1fr 1fr; }
+  .steps::before     { display: none; }
+  .cases__grid       { grid-template-columns: 1fr 1fr; }
+  .why__grid         { grid-template-columns: 1fr; }
+  .team__grid        { grid-template-columns: 1fr 1fr !important; }
+  .guarantee__grid   { grid-template-columns: 1fr; gap: 1px; }
+  .regions__grid     { grid-template-columns: repeat(3, 1fr); }
+  .footer__inner     { grid-template-columns: 1fr 1fr; }
+  .form-wrap         { padding: 32px 24px; }
+  .letter-doc        { padding: 32px 28px; }
 }
 @media (max-width: 600px) {
-  .section-title   { font-size: 1.55rem; }
-  .hero__title     { font-size: 1.75rem; }
-  .problems__grid  { grid-template-columns: 1fr; }
-  .steps           { grid-template-columns: 1fr; }
-  .cases__grid     { grid-template-columns: 1fr; }
-  .footer__inner   { grid-template-columns: 1fr; }
-  .form-grid       { grid-template-columns: 1fr; }
-  .header__cta     { display: none; }
-  .stats__grid     { grid-template-columns: 1fr 1fr; }
+  /* Topbar */
+  .topbar { font-size: 0.75rem; padding: 5px 12px; }
+  .topbar span:nth-child(3),
+  .topbar span:nth-child(4),
+  .topbar span:nth-child(5) { display: none; }
+
+  /* Header */
+  .header__inner     { padding: 10px 0; flex-wrap: wrap; gap: 8px; }
+  .header__cta       { display: none; }
+  .logo__name        { font-size: 1.1rem; }
+  .logo__tagline     { display: none; }
+  .header__phone a   { font-size: 1.05rem; white-space: nowrap; }
+  .header__phone span { font-size: 0.7rem; }
+
+  /* Sections */
+  .section           { padding: 52px 0; }
+  .section-title     { font-size: 1.45rem; }
+  .hero              { padding: 56px 0 48px; }
+  .hero__title       { font-size: 1.65rem; }
+  .hero__btns        { flex-direction: column; gap: 10px; }
+  .hero__btns .btn   { width: 100%; text-align: center; }
+  .problems__grid    { grid-template-columns: 1fr; }
+  .steps             { grid-template-columns: 1fr; }
+  .cases__grid       { grid-template-columns: 1fr; }
+  .team__grid        { grid-template-columns: 1fr !important; }
+  .footer__inner     { grid-template-columns: 1fr; }
+  .form-grid         { grid-template-columns: 1fr; }
+  .stats__grid       { grid-template-columns: 1fr 1fr; gap: 12px; }
+  .stats__num        { font-size: 2rem; }
+  .regions__grid     { grid-template-columns: repeat(2, 1fr); }
+  .letter-doc        { padding: 28px 20px; }
+  .letter-doc__footer { flex-direction: column; gap: 12px; align-items: flex-start; }
+  .modal-box         { padding: 36px 20px 28px; }
+  .form-wrap         { padding: 28px 16px; }
 }
 
 </style>
@@ -312,7 +360,7 @@ ul { list-style: none; }
         </div>
       </a>
       <div class="header__phone">
-        <a href="tel:+74957663020">+7 (495) 766-30-20</a>
+        <a href="tel:+74951798935">+7 (495) 179-89-35</a>
         <span>Бесплатная консультация</span>
       </div>
       <div class="header__cta">
@@ -336,7 +384,7 @@ ul { list-style: none; }
           от 150 000 до 500 000 ₽. Мы возвращаем эти деньги.
         </p>
         <div class="hero__btns">
-          <a href="tel:+74957663020" class="btn btn--green">Позвонить сейчас</a>
+          <a href="tel:+74951798935" class="btn btn--green">Позвонить сейчас</a>
           <button class="btn btn--outline" onclick="scrollToForm()">Оставить заявку</button>
         </div>
       </div>
@@ -811,7 +859,7 @@ ul { list-style: none; }
   <div class="container">
     <h2 style="font-size:1.9rem;font-weight:800;margin-bottom:12px;">Получите бесплатный анализ вашего дела</h2>
     <p style="opacity:0.85;margin-bottom:28px;font-size:1.05rem;">Позвоните прямо сейчас — ответим на все вопросы и скажем, есть ли шансы на отмену штрафа</p>
-    <a href="tel:+74957663020" class="btn btn--green" style="font-size:1.1rem;padding:16px 44px;margin-right:12px;">+7 (495) 766-30-20</a>
+    <a href="tel:+74951798935" class="btn btn--green" style="font-size:1.1rem;padding:16px 44px;margin-right:12px;">+7 (495) 179-89-35</a>
     <button class="btn btn--outline" onclick="scrollToForm()">Оставить заявку онлайн</button>
   </div>
 </section>
@@ -987,14 +1035,14 @@ ul { list-style: none; }
         <div class="footer__title">Навигация</div>
         <ul class="footer__links">
           <li><a href="#contact-form">Оставить заявку</a></li>
-          <li><a href="tel:+74957663020">Позвонить</a></li>
+          <li><a href="tel:+74951798935">Позвонить</a></li>
           <li><a href="#" onclick="return false;">Политика конфиденциальности</a></li>
         </ul>
       </div>
       <div>
         <div class="footer__title">Контакты</div>
         <div class="footer__phone">
-          <a href="tel:+74957663020">+7 (495) 766-30-20</a>
+          <a href="tel:+74951798935">+7 (495) 179-89-35</a>
           <span>Бесплатная консультация</span>
         </div>
         <div style="margin-top:14px;font-size:0.85rem;color:#9ca3af;">Пн–Пт: 9:00–20:00<br>Сб–Вс: 10:00–18:00</div>
@@ -1010,6 +1058,30 @@ ul { list-style: none; }
   </div>
 </footer>
 
+<!-- CONTACT MODAL (Оставить заявку) -->
+<div class="modal-overlay" id="contactModal" onclick="closeContactModal(event)">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeContactModal()">&times;</button>
+    <div class="modal-icon">⚖️</div>
+    <h3 class="modal-title">Получить консультацию</h3>
+    <p class="modal-sub">Оставьте контакты — перезвоним в течение 15 минут</p>
+    <form id="contactForm" novalidate>
+      <div class="modal-group">
+        <label for="cName">Ваше имя <span class="req">*</span></label>
+        <input type="text" id="cName" name="cName" placeholder="Как вас зовут?" autocomplete="given-name" />
+        <span class="field-error" id="err-cName"></span>
+      </div>
+      <div class="modal-group">
+        <label for="cPhone">Телефон <span class="req">*</span></label>
+        <input type="tel" id="cPhone" name="cPhone" placeholder="+7 (___) ___-__-__" autocomplete="tel" />
+        <span class="field-error" id="err-cPhone"></span>
+      </div>
+      <button type="submit" class="modal-submit">Перезвоните мне</button>
+      <p class="form-consent" style="margin-top:12px;">Нажимая кнопку, вы соглашаетесь на обработку персональных данных</p>
+    </form>
+  </div>
+</div>
+
 <!-- LIGHTBOX MODAL -->
 <div class="lb-overlay" id="lbOverlay" onclick="closeLetterModal(event)">
   <div class="lb-box" id="lbBox">
@@ -1023,10 +1095,25 @@ ul { list-style: none; }
 const TG_BOT_TOKEN = 'YOUR_BOT_TOKEN';
 const TG_CHAT_ID   = 'YOUR_CHAT_ID';
 
-// ===== SCROLL TO FORM =====
-function scrollToForm() {
-  document.getElementById('contact-form').scrollIntoView({ behavior: 'smooth' });
+// ===== CONTACT MODAL =====
+function scrollToForm() { openContactModal(); }
+
+function openContactModal() {
+  document.getElementById('contactModal').classList.add('active');
+  document.body.style.overflow = 'hidden';
+  setTimeout(() => { const el = document.getElementById('cName'); if (el) el.focus(); }, 100);
 }
+function closeContactModal(e) {
+  if (e && e.target !== document.getElementById('contactModal') && !e.target.classList.contains('modal-close')) return;
+  document.getElementById('contactModal').classList.remove('active');
+  document.body.style.overflow = '';
+}
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    closeContactModal({ target: document.getElementById('contactModal') });
+    closeLetterModal({ target: document.getElementById('lbOverlay') });
+  }
+});
 
 // ===== FAQ ACCORDION =====
 function toggleFaq(btn) {
@@ -1036,7 +1123,7 @@ function toggleFaq(btn) {
   if (!isOpen) item.classList.add('open');
 }
 
-// ===== PHONE MASK =====
+// ===== PHONE MASK (для полей org-формы: (000) 000-00-00) =====
 function applyPhoneMask(input) {
   input.addEventListener('input', function () {
     let val = this.value.replace(/\D/g, '');
@@ -1052,6 +1139,31 @@ function applyPhoneMask(input) {
 
 applyPhoneMask(document.getElementById('phone1'));
 applyPhoneMask(document.getElementById('phone2'));
+
+// ===== MODAL PHONE MASK: +7 (___) ___-__-__ =====
+(function() {
+  const input = document.getElementById('cPhone');
+  if (!input) return;
+  function format(val) {
+    let d = val.replace(/\D/g, '');
+    if (d.startsWith('7') || d.startsWith('8')) d = d.slice(1);
+    d = d.slice(0, 10);
+    let r = '+7';
+    if (d.length > 0) r += ' (' + d.slice(0, 3);
+    if (d.length >= 3) r += ')';
+    if (d.length > 3) r += ' ' + d.slice(3, 6);
+    if (d.length > 6) r += '-' + d.slice(6, 8);
+    if (d.length > 8) r += '-' + d.slice(8, 10);
+    return r;
+  }
+  input.addEventListener('focus', function() { if (!this.value) this.value = '+7 '; });
+  input.addEventListener('input', function() { const pos = this.selectionStart; this.value = format(this.value); });
+  input.addEventListener('keydown', function(e) {
+    if ((e.key === 'Backspace' || e.key === 'Delete') && this.value.replace(/\D/g,'').length <= 1) {
+      e.preventDefault(); this.value = '+7 ';
+    }
+  });
+})();
 
 // ===== PHONE WRAP STATE =====
 ['phone1', 'phone2'].forEach(function(id, i) {
@@ -1221,9 +1333,43 @@ document.getElementById('orgForm').addEventListener('submit', async function (e)
     console.warn('Telegram send failed:', err);
   }
 
-  // Показываем успех в любом случае (даже если TG недоступен)
-  document.getElementById('orgForm').style.display = 'none';
-  document.getElementById('formSuccess').style.display = 'block';
+  // Редирект на страницу благодарности
+  window.location.href = '/thanks3';
+});
+
+// ===== CONTACT FORM (маленькая модалка) =====
+document.getElementById('contactForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  let valid = true;
+
+  const name = document.getElementById('cName').value.trim();
+  if (!name || name.length < 2) {
+    showError('cName', 'Введите ваше имя');
+    valid = false;
+  } else { showValid('cName'); }
+
+  const phoneDigits = document.getElementById('cPhone').value.replace(/\D/g, '');
+  if (phoneDigits.length < 11) {
+    showError('cPhone', 'Введите полный номер телефона');
+    valid = false;
+  } else { showValid('cPhone'); }
+
+  if (!valid) return;
+
+  const btn = this.querySelector('.modal-submit');
+  btn.disabled = true;
+  btn.textContent = 'Отправка...';
+
+  try {
+    const text = `📞 *Заявка с сайта ПравоТранс*\n\n👤 *Имя:* ${name}\n📱 *Телефон:* +${phoneDigits}`;
+    await fetch(`https://api.telegram.org/bot${TG_BOT_TOKEN}/sendMessage`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ chat_id: TG_CHAT_ID, text, parse_mode: 'Markdown' })
+    });
+  } catch(err) { console.warn('TG error:', err); }
+
+  window.location.href = '/spasibo';
 });
 
 // ===== LETTER LIGHTBOX =====
